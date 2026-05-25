@@ -14,6 +14,7 @@ This isn't just a Tetris clone; it's a deep dive into state management, game loo
 ## 🛠️ Tech Stack
 - **Framework**: Flutter
 - **Language**: Dart
+- **Native Configuration**: Kotlin DSL (Gradle)
 - **State Management**: StatefulWidgets with optimized `Timer.periodic` game loops.
 
 ## 🧠 Technical Challenges & Learning Wins
