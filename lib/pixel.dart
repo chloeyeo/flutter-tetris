@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Pixel extends StatelessWidget {
-  final color;
+  final Color color;
   const Pixel({
     super.key,
     required this.color,

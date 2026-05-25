@@ -260,7 +260,7 @@ class _GameBoardState extends State<GameBoard> {
         }
 
         // set the top row to empty
-        gameBoard[0] = List.generate(row, (index)=>null);
+        gameBoard[0] = List.generate(rowLength, (index) => null);
 
         // increase score
         currentScore++;
@@ -311,13 +311,14 @@ class _GameBoardState extends State<GameBoard> {
                               final Tetromino? tetrominoType =
                                   gameBoard[row][col];
                               return Pixel(
-                                color: tetrominoColors[tetrominoType],
+                                color: tetrominoColors[tetrominoType] ??
+                                    Colors.white,
                               );
                             }
                             // otherwise, it is just an empty space.
                             else {
                               return Pixel(
-                                color: Colors.grey[900],
+                                color: Colors.grey[900] ?? Colors.black,
                               );
                             }
                           }),
