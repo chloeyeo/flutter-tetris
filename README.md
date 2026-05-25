@@ -29,6 +29,10 @@ I experimented with Flutter's new **Impeller** rendering engine. After identifyi
 Building a collision system that handles negative modulo results (for pieces spawning above the visible grid) required a deep understanding of how Dart handles arithmetic versus traditional C-style languages.
 
 ## 📸 Screenshots
+<img width="304" height="575" alt="image" src="https://github.com/user-attachments/assets/9379162a-0446-4d2f-a0e8-e5706101a499" />
+<img width="295" height="571" alt="image" src="https://github.com/user-attachments/assets/d85b9ff7-d53c-4ed8-b97e-89fe0bdb3f4f" />
+<img width="299" height="568" alt="image" src="https://github.com/user-attachments/assets/bc39185e-17de-425d-bed6-467ad61aa41f" />
+<img width="285" height="569" alt="image" src="https://github.com/user-attachments/assets/6577a0ce-3f37-4b7b-9b12-df3d29644188" />
 
 
 ## 🏁 How to Run
