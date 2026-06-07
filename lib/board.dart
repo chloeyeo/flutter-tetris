@@ -66,7 +66,7 @@ class _GameBoardState extends State<GameBoard> {
   double _verticalAccumulator = 0;
   final double _moveThreshold = 0.1; // Distance in pixels to move 1 block
   DateTime _lastHorizontalMoveTime = DateTime.now();
-  final int _horizontalMoveDelay = 140; // delay (the "notch" feel)
+  final int _horizontalMoveDelay = 200; // delay (the "notch" feel)
 
   @override
   void initState() {
