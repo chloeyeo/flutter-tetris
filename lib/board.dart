@@ -572,14 +572,15 @@ class _GameBoardState extends State<GameBoard> {
                   child: GestureDetector(
                     onTap: rotatePiece,
                     onPanUpdate: (details) {
-                      // Sensitivity threshold - HIGH SENSITIVITY FOR ACCURATE MOBILE FEEL
-                      if (details.delta.dx > 4) {
+                      // Sensitivity threshold - ULTRA HIGH SENSITIVITY
+                      // A tiny 2-pixel movement will now trigger a block move
+                      if (details.delta.dx > 2) {
                         moveRight();
-                      } else if (details.delta.dx < -4) {
+                      } else if (details.delta.dx < -2) {
                         moveLeft();
                       }
                       
-                      if (details.delta.dy > 6) {
+                      if (details.delta.dy > 3) {
                         // move down faster
                         if (!checkCollision(Direction.down)) {
                           setState(() {
