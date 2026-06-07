@@ -4,11 +4,13 @@ import 'skins.dart';
 class Pixel extends StatelessWidget {
   final Color color;
   final SkinType skinType;
+  final String? emoji; // [NEW] Optional emoji for legendary skins
 
   const Pixel({
     super.key,
     required this.color,
     this.skinType = SkinType.classic,
+    this.emoji,
   });
 
   @override
@@ -25,30 +27,37 @@ class Pixel extends StatelessWidget {
         ),
       ),
       margin: const EdgeInsets.all(1),
-      child: skinType == SkinType.sparkle
-          ? Stack(
-              children: [
-                Positioned(
-                  top: 2,
-                  left: 2,
-                  child: Icon(
-                    Icons.auto_awesome,
-                    size: 8,
-                    color: Colors.white.withAlpha(150),
-                  ),
-                ),
-                Positioned(
-                  bottom: 2,
-                  right: 2,
-                  child: Icon(
-                    Icons.star,
-                    size: 6,
-                    color: Colors.white.withAlpha(100),
-                  ),
-                ),
-              ],
+      child: emoji != null
+          ? Center(
+              child: Text(
+                emoji!,
+                style: const TextStyle(fontSize: 14),
+              ),
             )
-          : null,
+          : skinType == SkinType.sparkle
+              ? Stack(
+                  children: [
+                    Positioned(
+                      top: 2,
+                      left: 2,
+                      child: Icon(
+                        Icons.auto_awesome,
+                        size: 8,
+                        color: Colors.white.withAlpha(150),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 2,
+                      right: 2,
+                      child: Icon(
+                        Icons.star,
+                        size: 6,
+                        color: Colors.white.withAlpha(100),
+                      ),
+                    ),
+                  ],
+                )
+              : null,
     );
   }
 }

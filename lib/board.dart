@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tetris/piece.dart';
@@ -63,7 +64,7 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 10; // Distance in pixels to move 1 block
+  final double _moveThreshold = 1.5; // Distance in pixels to move 1 block
 
   @override
   void initState() {
@@ -684,6 +685,7 @@ class _GameBoardState extends State<GameBoard> {
                                     return Pixel(
                                       color: currentSkin.colors[currentPiece.type] ?? currentPiece.color,
                                       skinType: currentSkin.type,
+                                      emoji: currentSkin.emojis?[currentPiece.type],
                                     );
                                   }
                                   // if it's the ghost piece, draw it
@@ -691,6 +693,7 @@ class _GameBoardState extends State<GameBoard> {
                                     return Pixel(
                                       color: (currentSkin.colors[currentPiece.type] ?? currentPiece.color).withAlpha(76), // ~0.3 opacity
                                       skinType: currentSkin.type,
+                                      emoji: currentSkin.emojis?[currentPiece.type],
                                     );
                                   }
                                   // if there's a landed piece at this coordinate, draw it
@@ -701,6 +704,7 @@ class _GameBoardState extends State<GameBoard> {
                                       color: currentSkin.colors[tetrominoType] ??
                                           Colors.white,
                                       skinType: currentSkin.type,
+                                      emoji: currentSkin.emojis?[tetrominoType],
                                     );
                                   }
                                   // otherwise, it is just an empty space.

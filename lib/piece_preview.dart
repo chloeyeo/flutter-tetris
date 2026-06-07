@@ -37,6 +37,14 @@ class PiecePreview extends StatelessWidget {
                   color: skin.colors[type] ?? Colors.white,
                   borderRadius: BorderRadius.circular(2),
                 ),
+                child: skin.emojis?[type] != null
+                    ? Center(
+                        child: Text(
+                          skin.emojis![type]!,
+                          style: TextStyle(fontSize: cellSize * 0.6),
+                        ),
+                      )
+                    : null,
               ),
             );
           }).toList(),

@@ -5,12 +5,14 @@ enum SkinType {
   classic,
   y2k,
   sparkle,
+  candy,
 }
 
 class TetrisSkin {
   final SkinType type;
   final String name;
   final Map<Tetromino, Color> colors;
+  final Map<Tetromino, String>? emojis; // [NEW] Added for emoji skins
   final Color backgroundColor;
   final Color gridLineColor;
   final Color emptyColor;
@@ -19,6 +21,7 @@ class TetrisSkin {
     required this.type,
     required this.name,
     required this.colors,
+    this.emojis,
     required this.backgroundColor,
     required this.gridLineColor,
     required this.emptyColor,
@@ -67,12 +70,40 @@ class TetrisSkin {
     emptyColor: const Color(0xFF222222),
   );
 
+  static TetrisSkin candy = TetrisSkin(
+    type: SkinType.candy,
+    name: "Candy Land",
+    emojis: {
+      Tetromino.I: "🍫", // Chocolate Bar
+      Tetromino.L: "🍰", // Strawberry Cake
+      Tetromino.J: "🍦", // Soft Ice Cream
+      Tetromino.O: "🍩", // Donut
+      Tetromino.S: "🍬", // Candy
+      Tetromino.Z: "🍭", // Lollipop
+      Tetromino.T: "🧁", // Cupcake
+    },
+    colors: {
+      Tetromino.I: const Color(0xFF795548), // Brown
+      Tetromino.L: const Color(0xFFFF80AB), // Pink
+      Tetromino.J: const Color(0xFFB3E5FC), // Blue
+      Tetromino.O: const Color(0xFFFFD54F), // Yellow
+      Tetromino.S: const Color(0xFFA5D6A7), // Green
+      Tetromino.Z: const Color(0xFFFFAB91), // Orange
+      Tetromino.T: const Color(0xFFCE93D8), // Purple
+    },
+    backgroundColor: const Color(0xFFFFF1F0), // Soft Pinkish White
+    gridLineColor: Colors.pink.withAlpha(40),
+    emptyColor: const Color(0xFFFFFFFF),
+  );
+
   static TetrisSkin getSkin(SkinType type) {
     switch (type) {
       case SkinType.y2k:
         return y2k;
       case SkinType.sparkle:
         return sparkle;
+      case SkinType.candy:
+        return candy;
       case SkinType.classic:
         return classic;
     }
