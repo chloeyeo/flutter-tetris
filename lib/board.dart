@@ -219,15 +219,29 @@ class _GameBoardState extends State<GameBoard> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text("Game Over"),
-        content: Text("Your score is: $currentScore"),
+        backgroundColor: currentSkin.backgroundColor,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: currentSkin.gridLineColor, width: 2),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        title: Text(
+          "Game Over",
+          style: TextStyle(color: currentSkin.textColor, fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          "Your score is: $currentScore",
+          style: TextStyle(color: currentSkin.textColor.withAlpha(180)),
+        ),
         actions: [
           TextButton(
             onPressed: () {
               resetGame();
               Navigator.pop(context);
             },
-            child: const Text("Play Again"),
+            child: Text(
+              "Play Again",
+              style: TextStyle(color: currentSkin.textColor, fontWeight: FontWeight.bold),
+            ),
           )
         ],
       ),
@@ -499,7 +513,7 @@ class _GameBoardState extends State<GameBoard> {
                         onTap: holdPiece,
                         child: Column(
                           children: [
-                            const Text("HOLD", style: TextStyle(color: Colors.white, fontSize: 12)),
+                            Text("HOLD", style: TextStyle(color: currentSkin.textColor, fontSize: 12)),
                             const SizedBox(height: 5),
                             Container(
                               width: 60,
@@ -529,7 +543,7 @@ class _GameBoardState extends State<GameBoard> {
                         onTap: _openSkinGallery,
                         child: Column(
                           children: [
-                            const Text("SKINS", style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                            Text("SKINS", style: TextStyle(color: currentSkin.textColor, fontSize: 10, fontWeight: FontWeight.bold)),
                             const SizedBox(height: 5),
                             Container(
                               width: 40,
@@ -548,10 +562,10 @@ class _GameBoardState extends State<GameBoard> {
                       // Score
                       Column(
                         children: [
-                          const Text("SCORE", style: TextStyle(color: Colors.white, fontSize: 12)),
+                          Text("SCORE", style: TextStyle(color: currentSkin.textColor, fontSize: 12)),
                           Text(
                             '$currentScore',
-                            style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                            style: TextStyle(color: currentSkin.textColor, fontSize: 24, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -559,7 +573,7 @@ class _GameBoardState extends State<GameBoard> {
                       // Next Piece
                       Column(
                         children: [
-                          const Text("NEXT", style: TextStyle(color: Colors.white, fontSize: 12)),
+                          Text("NEXT", style: TextStyle(color: currentSkin.textColor, fontSize: 12)),
                           const SizedBox(height: 5),
                           Container(
                             width: 60,

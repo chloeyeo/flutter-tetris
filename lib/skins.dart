@@ -12,10 +12,11 @@ class TetrisSkin {
   final SkinType type;
   final String name;
   final Map<Tetromino, Color> colors;
-  final Map<Tetromino, String>? emojis; // [NEW] Added for emoji skins
+  final Map<Tetromino, String>? emojis;
   final Color backgroundColor;
   final Color gridLineColor;
   final Color emptyColor;
+  final Color textColor; // [NEW] Added for dynamic contrast
 
   TetrisSkin({
     required this.type,
@@ -25,6 +26,7 @@ class TetrisSkin {
     required this.backgroundColor,
     required this.gridLineColor,
     required this.emptyColor,
+    required this.textColor,
   });
 
   static TetrisSkin classic = TetrisSkin(
@@ -34,6 +36,7 @@ class TetrisSkin {
     backgroundColor: Colors.black,
     gridLineColor: Colors.grey[800]!,
     emptyColor: Colors.grey[900]!,
+    textColor: Colors.white,
   );
 
   static TetrisSkin y2k = TetrisSkin(
@@ -51,6 +54,7 @@ class TetrisSkin {
     backgroundColor: const Color(0xFF000033), // Dark Midnight Blue
     gridLineColor: const Color(0xFF333399).withAlpha(127),
     emptyColor: const Color(0xFF000022),
+    textColor: Colors.white,
   );
 
   static TetrisSkin sparkle = TetrisSkin(
@@ -68,32 +72,34 @@ class TetrisSkin {
     backgroundColor: const Color(0xFF1A1A1A),
     gridLineColor: Colors.white.withAlpha(30),
     emptyColor: const Color(0xFF222222),
+    textColor: Colors.white,
   );
 
   static TetrisSkin candy = TetrisSkin(
     type: SkinType.candy,
     name: "Candy Land",
     emojis: {
-      Tetromino.I: "🍫", // Chocolate Bar
-      Tetromino.L: "🍰", // Strawberry Cake
-      Tetromino.J: "🍦", // Soft Ice Cream
-      Tetromino.O: "🍩", // Donut
-      Tetromino.S: "🍬", // Candy
-      Tetromino.Z: "🍭", // Lollipop
-      Tetromino.T: "🧁", // Cupcake
+      Tetromino.I: "🍫",
+      Tetromino.L: "🍰",
+      Tetromino.J: "🍦",
+      Tetromino.O: "🍩",
+      Tetromino.S: "🍬",
+      Tetromino.Z: "🍭",
+      Tetromino.T: "🧁",
     },
     colors: {
-      Tetromino.I: const Color(0xFF795548), // Brown
-      Tetromino.L: const Color(0xFFFF80AB), // Pink
-      Tetromino.J: const Color(0xFFB3E5FC), // Blue
-      Tetromino.O: const Color(0xFFFFD54F), // Yellow
-      Tetromino.S: const Color(0xFFA5D6A7), // Green
-      Tetromino.Z: const Color(0xFFFFAB91), // Orange
-      Tetromino.T: const Color(0xFFCE93D8), // Purple
+      Tetromino.I: const Color(0xFF795548),
+      Tetromino.L: const Color(0xFFFF80AB),
+      Tetromino.J: const Color(0xFFB3E5FC),
+      Tetromino.O: const Color(0xFFFFD54F),
+      Tetromino.S: const Color(0xFFA5D6A7),
+      Tetromino.Z: const Color(0xFFFFAB91),
+      Tetromino.T: const Color(0xFFCE93D8),
     },
-    backgroundColor: const Color(0xFFFFF1F0), // Soft Pinkish White
+    backgroundColor: const Color(0xFFFFF1F0),
     gridLineColor: Colors.pink.withAlpha(40),
     emptyColor: const Color(0xFFFFFFFF),
+    textColor: const Color(0xFF5D4037), // Dark Chocolate Brown for contrast
   );
 
   static TetrisSkin getSkin(SkinType type) {
