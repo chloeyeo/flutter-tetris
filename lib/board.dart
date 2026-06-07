@@ -66,7 +66,7 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 1.5; // Distance in pixels to move 1 block
+  final double _moveThreshold = 0.1; // Distance in pixels to move 1 block
   DateTime _lastHorizontalMoveTime = DateTime.now();
   int _horizontalMoveDelay = 140; // Starts slow (140ms) for precision
   int _consecutiveHorizontalMoves = 0; // Track consecutive moves for DAS
@@ -165,7 +165,7 @@ class _GameBoardState extends State<GameBoard> {
     ).then((_) {
       // RESUME GAME WHEN RETURNING FROM GALLERY
       if (!gameOver) {
-        Duration frameRate = const Duration(milliseconds: 2000); // CONSISTENT SLOW SPEED
+        Duration frameRate = const Duration(milliseconds: 4000); // CONSISTENT SLOW SPEED
         gameLoop(frameRate);
       }
     });
