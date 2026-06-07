@@ -62,7 +62,9 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 3.0; // OPTIMAL SENSITIVITY for one-block-at-a-time feel
+  final double _moveThreshold = 3.0; // SENSITIVITY for initial movement
+  DateTime _lastHorizontalMoveTime = DateTime.now();
+  final int _horizontalMoveDelay = 60; // 60ms delay between block steps (the "snap" feel)
 
   @override
   void initState() {
@@ -597,9 +599,12 @@ class _GameBoardState extends State<GameBoard> {
                   _horizontalAccumulator += details.delta.dx;
                   _verticalAccumulator += details.delta.dy;
 
-                  // SEQUENTIAL MOVEMENT: Only move one block at a time per event
-                  // This ensures you can see each block move step-by-step
-                  if (_horizontalAccumulator.abs() >= _moveThreshold) {
+                  final now = DateTime.now();
+                  final timeSinceLastMove = now.difference(_lastHorizontalMoveTime).inMilliseconds;
+
+                  // NOTCHED MOVEMENT: Checks distance AND adds a tiny time delay
+                  // This creates the "gear-like" feel where each step is distinct
+                  if (_horizontalAccumulator.abs() >= _moveThreshold && timeSinceLastMove > _horizontalMoveDelay) {
                     setState(() { // FORCE INSTANT REDRAW
                       if (_horizontalAccumulator > 0) {
                         moveRight();
@@ -607,8 +612,9 @@ class _GameBoardState extends State<GameBoard> {
                         moveLeft();
                       }
                     });
-                    // Reset to 0 to wait for the next deliberate movement
+                    // Reset to 0 and record the time to create the "notch"
                     _horizontalAccumulator = 0;
+                    _lastHorizontalMoveTime = now;
                   }
 
                   // Process vertical movement (Soft Drop)
