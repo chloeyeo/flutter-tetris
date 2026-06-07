@@ -105,6 +105,8 @@ class TetrisSkin {
     gridLineColor: Colors.pink.withAlpha(40),
     emptyColor: const Color(0xFFFFFFFF),
     textColor: const Color(0xFF5D4037), // Dark Chocolate Brown for contrast
+    landSound: "sounds/candy_land.wav",
+    clearSound: "sounds/candy_clear.wav",
   );
 
   static TetrisSkin chalkboard = TetrisSkin(
