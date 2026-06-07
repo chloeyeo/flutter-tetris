@@ -66,9 +66,9 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 0.1; // Distance in pixels to move 1 block
+  final double _moveThreshold = 20.0; // Finger must move 20 pixels to shift a block
   DateTime _lastHorizontalMoveTime = DateTime.now();
-  int _horizontalMoveDelay = 140; // Starts slow (140ms) for precision
+  int _horizontalMoveDelay = 100; // Starts slow (140ms) for precision
   int _consecutiveHorizontalMoves = 0; // Track consecutive moves for DAS
 
   @override
@@ -165,7 +165,7 @@ class _GameBoardState extends State<GameBoard> {
     ).then((_) {
       // RESUME GAME WHEN RETURNING FROM GALLERY
       if (!gameOver) {
-        Duration frameRate = const Duration(milliseconds: 4000); // CONSISTENT SLOW SPEED
+        Duration frameRate = const Duration(milliseconds: 800); // CONSISTENT SLOW SPEED
         gameLoop(frameRate);
       }
     });
@@ -181,7 +181,7 @@ class _GameBoardState extends State<GameBoard> {
   void startGame() {
     currentPiece.initializePiece();
     generateNextPiece();
-    Duration frameRate = const Duration(milliseconds: 400); // SLOW START (was 100ms)
+    Duration frameRate = const Duration(milliseconds: 800); // SLOW START (was 100ms)
     
     // Start the game loop immediately
     if (mounted) {
@@ -601,7 +601,7 @@ class _GameBoardState extends State<GameBoard> {
                   _horizontalAccumulator = 0;
                   _verticalAccumulator = 0;
                   _consecutiveHorizontalMoves = 0;
-                  _horizontalMoveDelay = 140; // Reset to slow speed
+                  _horizontalMoveDelay = 100; // Faster initial response
                 },
                 onPanUpdate: (details) {
                   // Add the change in position to our accumulators
@@ -635,9 +635,8 @@ class _GameBoardState extends State<GameBoard> {
                     // Record the move and accelerate (DAS Logic)
                     _consecutiveHorizontalMoves++;
                     if (_consecutiveHorizontalMoves > 1) {
-                      // After the first move, start decreasing delay (accelerating)
-                      // Min delay of 45ms for super fast shifting
-                      _horizontalMoveDelay = max(45, 140 - (_consecutiveHorizontalMoves * 15));
+                      // Accelerate faster: subtract 20ms per move, floor at 35ms
+                      _horizontalMoveDelay = max(35, 100 - (_consecutiveHorizontalMoves * 20));
                     }
 
                     // [BRAKE LOGIC] Reset to 0 after movement to prevent "gliding"
