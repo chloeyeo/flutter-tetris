@@ -123,8 +123,8 @@ class TetrisSkin {
     gridLineColor: Colors.white.withAlpha(20),
     emptyColor: const Color(0xFF003D33),
     textColor: Colors.white.withAlpha(200),
-    landSound: "sounds/chalk_land.mp3",
-    clearSound: "sounds/eraser_swipe.mp3",
+    landSound: "sounds/chalk_land.wav",
+    clearSound: "sounds/eraser_swipe.wav",
   );
 
   static TetrisSkin getSkin(SkinType type) {
