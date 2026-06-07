@@ -468,221 +468,229 @@ class _GameBoardState extends State<GameBoard> {
     return Scaffold(
       backgroundColor: currentSkin.backgroundColor,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            // Top Row for Hold and Next
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Hold Piece
-                  GestureDetector(
-                    onTap: holdPiece,
-                    child: Column(
-                      children: [
-                        const Text("HOLD", style: TextStyle(color: Colors.white, fontSize: 12)),
-                        const SizedBox(height: 5),
-                        Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: currentSkin.gridLineColor),
+            Column(
+              children: [
+                // Top Row for Hold and Next
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Hold Piece
+                      GestureDetector(
+                        onTap: holdPiece,
+                        child: Column(
+                          children: [
+                            const Text("HOLD", style: TextStyle(color: Colors.white, fontSize: 12)),
+                            const SizedBox(height: 5),
+                            Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: currentSkin.gridLineColor),
+                              ),
+                              child: heldPiece != null
+                                  ? Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: PiecePreview(
+                                          type: heldPiece!.type,
+                                          skin: currentSkin,
+                                        ),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Skins Gallery
+                      GestureDetector(
+                        onTap: _openSkinGallery,
+                        child: Column(
+                          children: [
+                            const Text("SKINS", style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 5),
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[900],
+                                border: Border.all(color: Colors.blue),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.palette, color: Colors.white, size: 20),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Score
+                      Column(
+                        children: [
+                          const Text("SCORE", style: TextStyle(color: Colors.white, fontSize: 12)),
+                          Text(
+                            '$currentScore',
+                            style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                           ),
-                          child: heldPiece != null
-                              ? Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: PiecePreview(
-                                      type: heldPiece!.type,
-                                      skin: currentSkin,
+                        ],
+                      ),
+
+                      // Next Piece
+                      Column(
+                        children: [
+                          const Text("NEXT", style: TextStyle(color: Colors.white, fontSize: 12)),
+                          const SizedBox(height: 5),
+                          Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: currentSkin.gridLineColor),
+                            ),
+                            child: nextPiece != null
+                                ? Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: PiecePreview(
+                                        type: nextPiece!.type,
+                                        skin: currentSkin,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              : null,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Skins Gallery
-                  GestureDetector(
-                    onTap: _openSkinGallery,
-                    child: Column(
-                      children: [
-                        const Text("SKINS", style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 5),
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[900],
-                            border: Border.all(color: Colors.blue),
-                            shape: BoxShape.circle,
+                                  )
+                                : null,
                           ),
-                          child: const Icon(Icons.palette, color: Colors.white, size: 20),
-                        ),
-                      ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                Expanded(
+                  child: GestureDetector(
+                    onTap: rotatePiece,
+                    onPanUpdate: (details) {
+                      // Sensitivity threshold - HIGH SENSITIVITY FOR ACCURATE MOBILE FEEL
+                      if (details.delta.dx > 4) {
+                        moveRight();
+                      } else if (details.delta.dx < -4) {
+                        moveLeft();
+                      }
+                      
+                      if (details.delta.dy > 6) {
+                        // move down faster
+                        if (!checkCollision(Direction.down)) {
+                          setState(() {
+                            currentPiece.movePiece(Direction.down);
+                          });
+                        }
+                      }
+                    },
+                    onVerticalDragEnd: (details) {
+                      // detect sharp downward flick for hard drop
+                      if (details.primaryVelocity != null && details.primaryVelocity! > 500) {
+                        hardDrop();
+                      }
+                    },
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        // calculate best fit size for the grid
+                        double availableWidth = constraints.maxWidth;
+                        double availableHeight = constraints.maxHeight;
+                        
+                        // Force a fixed 1:2 aspect ratio for the board (standard Tetris)
+                        double pixelSize = min(
+                          availableWidth / rowLength, 
+                          availableHeight / colLength
+                        );
+
+                        // Ensure the container itself has a fixed size to prevent shifting
+                        double boardWidth = pixelSize * rowLength;
+                        double boardHeight = pixelSize * colLength;
+
+                        return Center(
+                          child: SizedBox(
+                            width: boardWidth,
+                            height: boardHeight,
+                            child: GridView.builder(
+                                padding: EdgeInsets.zero,
+                                itemCount: rowLength * colLength,
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: rowLength),
+                                itemBuilder: (context, index) {
+                                  // calculate the row and col of this specific pixel
+                                  int row = (index / rowLength).floor();
+                                  int col = index % rowLength;
+
+                                  // if it's the current falling piece, draw it
+                                  if (currentPiece.position.contains(index)) {
+                                    return Pixel(
+                                      color: currentSkin.colors[currentPiece.type] ?? currentPiece.color,
+                                      skinType: currentSkin.type,
+                                    );
+                                  }
+                                  // if it's the ghost piece, draw it
+                                  else if (getGhostPosition().contains(index)) {
+                                    return Pixel(
+                                      color: (currentSkin.colors[currentPiece.type] ?? currentPiece.color).withAlpha(76), // ~0.3 opacity
+                                      skinType: currentSkin.type,
+                                    );
+                                  }
+                                  // if there's a landed piece at this coordinate, draw it
+                                  else if (gameBoard[row][col] != null) {
+                                    final Tetromino? tetrominoType =
+                                        gameBoard[row][col];
+                                    return Pixel(
+                                      color: currentSkin.colors[tetrominoType] ??
+                                          Colors.white,
+                                      skinType: currentSkin.type,
+                                    );
+                                  }
+                                  // otherwise, it is just an empty space.
+                                  else {
+                                    return Pixel(
+                                      color: currentSkin.emptyColor,
+                                      skinType: currentSkin.type,
+                                    );
+                                  }
+                                }),
+                          ),
+                        );
+                      },
                     ),
                   ),
-
-                  // Score
-                  Column(
-                    children: [
-                      const Text("SCORE", style: TextStyle(color: Colors.white, fontSize: 12)),
-                      Text(
-                        '$currentScore',
-                        style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-
-                  // Next Piece
-                  Column(
-                    children: [
-                      const Text("NEXT", style: TextStyle(color: Colors.white, fontSize: 12)),
-                      const SizedBox(height: 5),
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: currentSkin.gridLineColor),
-                        ),
-                        child: nextPiece != null
-                            ? Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: PiecePreview(
-                                    type: nextPiece!.type,
-                                    skin: currentSkin,
-                                  ),
-                                ),
-                              )
-                            : null,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            Expanded(
-              child: GestureDetector(
-                onTap: rotatePiece,
-                onPanUpdate: (details) {
-                  // Sensitivity threshold - HIGH SENSITIVITY FOR ACCURATE MOBILE FEEL
-                  if (details.delta.dx > 4) {
-                    moveRight();
-                  } else if (details.delta.dx < -4) {
-                    moveLeft();
-                  }
-                  
-                  if (details.delta.dy > 6) {
-                    // move down faster
-                    if (!checkCollision(Direction.down)) {
-                      setState(() {
-                        currentPiece.movePiece(Direction.down);
-                      });
-                    }
-                  }
-                },
-                onVerticalDragEnd: (details) {
-                  // detect sharp downward flick for hard drop
-                  if (details.primaryVelocity != null && details.primaryVelocity! > 500) {
-                    hardDrop();
-                  }
-                },
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    // calculate best fit size for the grid
-                    double availableWidth = constraints.maxWidth;
-                    double availableHeight = constraints.maxHeight;
-                    
-                    // Force a fixed 1:2 aspect ratio for the board (standard Tetris)
-                    double pixelSize = min(
-                      availableWidth / rowLength, 
-                      availableHeight / colLength
-                    );
-
-                    // Ensure the container itself has a fixed size to prevent shifting
-                    double boardWidth = pixelSize * rowLength;
-                    double boardHeight = pixelSize * colLength;
-
-                    return Center(
-                      child: SizedBox(
-                        width: boardWidth,
-                        height: boardHeight,
-                        child: GridView.builder(
-                            padding: EdgeInsets.zero,
-                            itemCount: rowLength * colLength,
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: rowLength),
-                            itemBuilder: (context, index) {
-                              // calculate the row and col of this specific pixel
-                              int row = (index / rowLength).floor();
-                              int col = index % rowLength;
-
-                              // if it's the current falling piece, draw it
-                              if (currentPiece.position.contains(index)) {
-                                return Pixel(
-                                  color: currentSkin.colors[currentPiece.type] ?? currentPiece.color,
-                                  skinType: currentSkin.type,
-                                );
-                              }
-                              // if it's the ghost piece, draw it
-                              else if (getGhostPosition().contains(index)) {
-                                return Pixel(
-                                  color: (currentSkin.colors[currentPiece.type] ?? currentPiece.color).withAlpha(76), // ~0.3 opacity
-                                  skinType: currentSkin.type,
-                                );
-                              }
-                              // if there's a landed piece at this coordinate, draw it
-                              else if (gameBoard[row][col] != null) {
-                                final Tetromino? tetrominoType =
-                                    gameBoard[row][col];
-                                return Pixel(
-                                  color: currentSkin.colors[tetrominoType] ??
-                                      Colors.white,
-                                  skinType: currentSkin.type,
-                                );
-                              }
-                              // otherwise, it is just an empty space.
-                              else {
-                                return Pixel(
-                                  color: currentSkin.emptyColor,
-                                  skinType: currentSkin.type,
-                                );
-                              }
-                            }),
-                      ),
-                    );
-                  },
                 ),
-              ),
+
+                // FOOTER (Optional additional info)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 55.0), // Extra space for the floating ad
+                  child: Text(
+                    "Tap to rotate • Swipe to move • Tap HOLD box to swap",
+                    style: TextStyle(color: Colors.grey[600], fontSize: 10),
+                  ),
+                ),
+              ],
             ),
 
-            // FOOTER (Optional additional info)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 5.0),
-              child: Text(
-                "Tap to rotate • Swipe to move • Tap HOLD box to swap",
-                style: TextStyle(color: Colors.grey[600], fontSize: 10),
+            // Floating Ad Container at the bottom
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: SizedBox(
+                height: 50,
+                child: _isBannerLoaded
+                    ? AdWidget(ad: _bannerAd!)
+                    : const SizedBox.shrink(),
               ),
-            ),
-
-            // Ad Container with Reserved Space
-            SizedBox(
-              height: _isBannerLoaded ? _bannerAd!.size.height.toDouble() : 50,
-              width: double.infinity,
-              child: _isBannerLoaded
-                  ? Center(child: AdWidget(ad: _bannerAd!))
-                  : const SizedBox.shrink(),
             ),
           ],
         ),
-      ), // Column
-    ); // Scaffold
+      ),
+    );
   }
 }
