@@ -250,14 +250,21 @@ class Piece {
       position = newPosition;
       rotationState = nextRotationState;
     } else {
-      // WALL KICK: Try shifting the piece if it hits a wall
-      List<int> offsets = [1, -1, 2, -2];
-      for (int offset in offsets) {
+      // BETTER WALL KICK (SRS-lite)
+      // Try shifting left, right, up
+      List<int> kickOffsets = [
+        1, -1, // Right, Left
+        rowLength, // Down (actually push up if we check negative rowLength, but wait)
+        -rowLength, // Up
+        2, -2, // Far Right, Far Left
+      ];
+      
+      for (int offset in kickOffsets) {
         List<int> kickedPosition = newPosition.map((pos) => pos + offset).toList();
         if (piecePositionIsValid(kickedPosition, gameBoard)) {
           position = kickedPosition;
           rotationState = nextRotationState;
-          return; // Success!
+          return;
         }
       }
     }
