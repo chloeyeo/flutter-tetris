@@ -63,9 +63,7 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 25.0; // Distance in pixels to move 1 block
-  DateTime _lastHorizontalMoveTime = DateTime.now();
-  final int _horizontalMoveDelay = 60; 
+  final double _moveThreshold = 1.0; // Distance in pixels to move 1 block
 
   @override
   void initState() {
@@ -597,11 +595,19 @@ class _GameBoardState extends State<GameBoard> {
                 },
                 onPanUpdate: (details) {
                   // Add the change in position to our accumulators
-                  _horizontalAccumulator += details.delta.dx;
-                  _verticalAccumulator += details.delta.dy;
+                  double dx = details.delta.dx;
+                  double dy = details.delta.dy;
+
+                  // AXIS LOCK: If horizontal movement is dominant, ignore vertical to prevent accidental drops
+                  // This ensures that frantic left/right swipes don't trigger "soft drop"
+                  if (dx.abs() > dy.abs()) {
+                    _horizontalAccumulator += dx;
+                  } else if (dy > 0) {
+                    // Only accumulate vertical if moving DOWN and it's the dominant movement
+                    _verticalAccumulator += dy;
+                  }
 
                   // DISTANCE-BASED MOVEMENT: Moves block exactly when threshold is crossed
-                  // This removes the "floaty" feel and makes it stop exactly with your finger
                   if (_horizontalAccumulator.abs() >= _moveThreshold) {
                     setState(() {
                       if (_horizontalAccumulator > 0) {
@@ -617,8 +623,9 @@ class _GameBoardState extends State<GameBoard> {
                     HapticFeedback.selectionClick();
                   }
 
-                  // Process vertical movement (Soft Drop)
-                  if (_verticalAccumulator >= _moveThreshold) {
+                  // Process vertical movement (Soft Drop) with a higher threshold to prevent accidents
+                  // 60.0 pixels is a deliberate downward slide
+                  if (_verticalAccumulator >= 60.0) {
                     if (!checkCollision(Direction.down)) {
                       setState(() {
                         currentPiece.movePiece(Direction.down);
