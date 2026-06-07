@@ -69,6 +69,7 @@ class _GameBoardState extends State<GameBoard> {
 
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
     setState(() {
       final skinIndex = prefs.getInt('current_skin') ?? 0;
       currentSkin = TetrisSkin.getSkin(SkinType.values[skinIndex]);
@@ -80,6 +81,7 @@ class _GameBoardState extends State<GameBoard> {
 
   void _initAds() {
     _adService.init().then((_) {
+      if (!mounted) return;
       _loadBannerAd();
     });
   }
@@ -164,13 +166,10 @@ class _GameBoardState extends State<GameBoard> {
     generateNextPiece();
     Duration frameRate = const Duration(milliseconds: 600); // SLOWER SPEED
     
-    // Use a small delay to ensure the UI is rendered before the loop starts
-    // This helps with initial touch responsiveness
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (mounted) {
-        gameLoop(frameRate);
-      }
-    });
+    // Start the game loop immediately
+    if (mounted) {
+      gameLoop(frameRate);
+    }
   }
 
   void gameLoop(Duration frameRate) {
