@@ -158,7 +158,7 @@ class _GameBoardState extends State<GameBoard> {
     ).then((_) {
       // RESUME GAME WHEN RETURNING FROM GALLERY
       if (!gameOver) {
-        Duration frameRate = const Duration(milliseconds: 100);
+        Duration frameRate = const Duration(milliseconds: 400); // CONSISTENT SLOW SPEED
         gameLoop(frameRate);
       }
     });
@@ -174,7 +174,7 @@ class _GameBoardState extends State<GameBoard> {
   void startGame() {
     currentPiece.initializePiece();
     generateNextPiece();
-    Duration frameRate = const Duration(milliseconds: 100); // FASTER START
+    Duration frameRate = const Duration(milliseconds: 400); // SLOW START (was 100ms)
     
     // Start the game loop immediately
     if (mounted) {
