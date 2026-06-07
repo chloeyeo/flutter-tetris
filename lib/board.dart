@@ -64,7 +64,9 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 1.5; // Distance in pixels to move 1 block
+  final double _moveThreshold = 30.0; // Distance in pixels to move 1 block
+  DateTime _lastHorizontalMoveTime = DateTime.now();
+  final int _horizontalMoveDelay = 60; // 60ms delay (the "notch" feel)
 
   @override
   void initState() {
@@ -615,7 +617,6 @@ class _GameBoardState extends State<GameBoard> {
                   double dy = details.delta.dy;
 
                   // AXIS LOCK: If horizontal movement is dominant, ignore vertical to prevent accidental drops
-                  // This ensures that frantic left/right swipes don't trigger "soft drop"
                   if (dx.abs() > dy.abs()) {
                     _horizontalAccumulator += dx;
                   } else if (dy > 0) {
@@ -623,8 +624,12 @@ class _GameBoardState extends State<GameBoard> {
                     _verticalAccumulator += dy;
                   }
 
-                  // DISTANCE-BASED MOVEMENT: Moves block exactly when threshold is crossed
-                  if (_horizontalAccumulator.abs() >= _moveThreshold) {
+                  final now = DateTime.now();
+                  final timeSinceLastMove = now.difference(_lastHorizontalMoveTime).inMilliseconds;
+
+                  // NOTCHED MOVEMENT: Checks distance AND adds a tiny time delay
+                  // This creates the "gear-like" feel where each step is distinct
+                  if (_horizontalAccumulator.abs() >= _moveThreshold && timeSinceLastMove > _horizontalMoveDelay) {
                     setState(() {
                       if (_horizontalAccumulator > 0) {
                         moveRight();
@@ -637,12 +642,11 @@ class _GameBoardState extends State<GameBoard> {
                     HapticFeedback.selectionClick();
 
                     // [BRAKE LOGIC] Reset to 0 after movement to prevent "gliding"
-                    // This forces the user to move another 30px for the next block
                     _horizontalAccumulator = 0;
+                    _lastHorizontalMoveTime = now;
                   }
 
                   // Process vertical movement (Soft Drop) with a higher threshold to prevent accidents
-                  // 60.0 pixels is a deliberate downward slide
                   if (_verticalAccumulator >= 60.0) {
                     if (!checkCollision(Direction.down)) {
                       setState(() {
