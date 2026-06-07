@@ -629,6 +629,10 @@ class _GameBoardState extends State<GameBoard> {
                     },
                     child: LayoutBuilder(
                       builder: (context, constraints) {
+                        // PRE-CALCULATE GHOST POSITION ONCE PER BUILD
+                        // This prevents 200 calculations per frame, making touch instant
+                        final ghostPosition = getGhostPosition();
+
                         // calculate best fit size for the grid
                         double availableWidth = constraints.maxWidth;
                         double availableHeight = constraints.maxHeight;
@@ -667,7 +671,7 @@ class _GameBoardState extends State<GameBoard> {
                                     );
                                   }
                                   // if it's the ghost piece, draw it
-                                  else if (getGhostPosition().contains(index)) {
+                                  else if (ghostPosition.contains(index)) {
                                     return Pixel(
                                       color: (currentSkin.colors[currentPiece.type] ?? currentPiece.color).withAlpha(76), // ~0.3 opacity
                                       skinType: currentSkin.type,
