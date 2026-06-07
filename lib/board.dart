@@ -597,28 +597,28 @@ class _GameBoardState extends State<GameBoard> {
                   _horizontalAccumulator += details.delta.dx;
                   _verticalAccumulator += details.delta.dy;
 
-                  // Check if we've moved enough horizontally
-                  if (_horizontalAccumulator.abs() >= _moveThreshold) {
+                  // ULTRA SENSITIVE: Process all accumulated movement in a single frame
+                  // This allows for "multi-step" jumps if moving quickly
+                  while (_horizontalAccumulator.abs() >= _moveThreshold) {
                     setState(() { // FORCE INSTANT REDRAW
                       if (_horizontalAccumulator > 0) {
                         moveRight();
+                        _horizontalAccumulator -= _moveThreshold;
                       } else {
                         moveLeft();
+                        _horizontalAccumulator += _moveThreshold;
                       }
                     });
-                    // Reset horizontal but keep the "leftover" movement for smoothness
-                    _horizontalAccumulator = 0;
                   }
 
-                  // Check if we've moved enough vertically (Soft Drop)
-                  if (_verticalAccumulator >= _moveThreshold) {
+                  // Process vertical movement (Soft Drop)
+                  while (_verticalAccumulator >= _moveThreshold) {
                     if (!checkCollision(Direction.down)) {
                       setState(() {
                         currentPiece.movePiece(Direction.down);
                       });
                     }
-                    // Reset vertical
-                    _verticalAccumulator = 0;
+                    _verticalAccumulator -= _moveThreshold;
                   }
                 },
                     onVerticalDragEnd: (details) {
