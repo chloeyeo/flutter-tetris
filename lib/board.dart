@@ -64,9 +64,9 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 1.5; // Distance in pixels to move 1 block
+  final double _moveThreshold = 0.1; // Distance in pixels to move 1 block
   DateTime _lastHorizontalMoveTime = DateTime.now();
-  final int _horizontalMoveDelay = 60; // 60ms delay (the "notch" feel)
+  final int _horizontalMoveDelay = 140; // delay (the "notch" feel)
 
   @override
   void initState() {
@@ -162,7 +162,7 @@ class _GameBoardState extends State<GameBoard> {
     ).then((_) {
       // RESUME GAME WHEN RETURNING FROM GALLERY
       if (!gameOver) {
-        Duration frameRate = const Duration(milliseconds: 400); // CONSISTENT SLOW SPEED
+        Duration frameRate = const Duration(milliseconds: 2000); // CONSISTENT SLOW SPEED
         gameLoop(frameRate);
       }
     });
@@ -437,25 +437,6 @@ class _GameBoardState extends State<GameBoard> {
     }
     // force land
     checkLanding();
-  }
-
-  IconData _getTetrominoIcon(Tetromino type) {
-    switch (type) {
-      case Tetromino.L:
-        return Icons.turn_right;
-      case Tetromino.J:
-        return Icons.turn_left;
-      case Tetromino.I:
-        return Icons.maximize;
-      case Tetromino.O:
-        return Icons.square;
-      case Tetromino.S:
-        return Icons.waves;
-      case Tetromino.Z:
-        return Icons.straighten;
-      case Tetromino.T:
-        return Icons.publish;
-    }
   }
 
   void rotatePiece() {
