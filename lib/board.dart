@@ -563,14 +563,14 @@ class _GameBoardState extends State<GameBoard> {
               child: GestureDetector(
                 onTap: rotatePiece,
                 onPanUpdate: (details) {
-                  // Sensitivity threshold - ADJUSTED FOR ACCURATE MOBILE FEEL
-                  if (details.delta.dx > 6) {
+                  // Sensitivity threshold - HIGH SENSITIVITY FOR ACCURATE MOBILE FEEL
+                  if (details.delta.dx > 4) {
                     moveRight();
-                  } else if (details.delta.dx < -6) {
+                  } else if (details.delta.dx < -4) {
                     moveLeft();
                   }
                   
-                  if (details.delta.dy > 8) {
+                  if (details.delta.dy > 6) {
                     // move down faster
                     if (!checkCollision(Direction.down)) {
                       setState(() {
@@ -590,13 +590,21 @@ class _GameBoardState extends State<GameBoard> {
                     // calculate best fit size for the grid
                     double availableWidth = constraints.maxWidth;
                     double availableHeight = constraints.maxHeight;
-                    double pixelSize =
-                        min(availableWidth / rowLength, availableHeight / colLength);
+                    
+                    // Force a fixed 1:2 aspect ratio for the board (standard Tetris)
+                    double pixelSize = min(
+                      availableWidth / rowLength, 
+                      availableHeight / colLength
+                    );
+
+                    // Ensure the container itself has a fixed size to prevent shifting
+                    double boardWidth = pixelSize * rowLength;
+                    double boardHeight = pixelSize * colLength;
 
                     return Center(
                       child: SizedBox(
-                        width: pixelSize * rowLength,
-                        height: pixelSize * colLength,
+                        width: boardWidth,
+                        height: boardHeight,
                         child: GridView.builder(
                             padding: EdgeInsets.zero,
                             itemCount: rowLength * colLength,
@@ -657,12 +665,14 @@ class _GameBoardState extends State<GameBoard> {
               ),
             ),
 
-            if (_isBannerLoaded)
-              SizedBox(
-                height: _bannerAd!.size.height.toDouble(),
-                width: _bannerAd!.size.width.toDouble(),
-                child: AdWidget(ad: _bannerAd!),
-              ),
+            // Ad Container with Reserved Space
+            SizedBox(
+              height: _isBannerLoaded ? _bannerAd!.size.height.toDouble() : 50,
+              width: double.infinity,
+              child: _isBannerLoaded
+                  ? Center(child: AdWidget(ad: _bannerAd!))
+                  : const SizedBox.shrink(),
+            ),
           ],
         ),
       ), // Column
