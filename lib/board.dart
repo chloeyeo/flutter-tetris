@@ -62,7 +62,7 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 15.0; // Total pixels moved to trigger 1 block shift
+  final double _moveThreshold = 6.0; // ULTRA SENSITIVE - lowered from 15.0
 
   @override
   void initState() {
@@ -575,6 +575,7 @@ class _GameBoardState extends State<GameBoard> {
 
                 Expanded(
                   child: GestureDetector(
+                    behavior: HitTestBehavior.opaque, // Ensure even empty space catches touch
                     onTap: rotatePiece,
                 onPanStart: (details) {
                   // Reset accumulators when a new touch starts
