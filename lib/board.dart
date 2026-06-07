@@ -62,13 +62,13 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 3.0; // ULTRA SENSITIVE - lowered from 15.0
+  final double _moveThreshold = 1.0; // MAXIMUM SENSITIVITY - lowered from 3.0
 
   @override
   void initState() {
     super.initState();
     _loadSettings();
-    _initAds();
+    // _initAds(); // Temporarily disabled to verify startup speed
     startGame();
   }
 
@@ -482,6 +482,7 @@ class _GameBoardState extends State<GameBoard> {
                     children: [
                       // Hold Piece
                       GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         onTap: holdPiece,
                         child: Column(
                           children: [
@@ -511,6 +512,7 @@ class _GameBoardState extends State<GameBoard> {
 
                       // Skins Gallery
                       GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         onTap: _openSkinGallery,
                         child: Column(
                           children: [
