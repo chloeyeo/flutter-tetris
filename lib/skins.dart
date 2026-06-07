@@ -109,7 +109,7 @@ class TetrisSkin {
 
   static TetrisSkin chalkboard = TetrisSkin(
     type: SkinType.chalkboard,
-    name: "Scholastic Chalk",
+    name: "Chalk Board",
     colors: {
       Tetromino.I: const Color(0xFFE0F7FA), // Chalk Blue
       Tetromino.L: const Color(0xFFFFF9C4), // Chalk Yellow
