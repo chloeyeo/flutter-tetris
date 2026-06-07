@@ -63,9 +63,9 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 3.0; // SENSITIVITY for initial movement
+  final double _moveThreshold = 25.0; // Distance in pixels to move 1 block
   DateTime _lastHorizontalMoveTime = DateTime.now();
-  final int _horizontalMoveDelay = 120; // 120ms delay (Increased from 60ms for precision)
+  final int _horizontalMoveDelay = 60; 
 
   @override
   void initState() {
@@ -600,26 +600,21 @@ class _GameBoardState extends State<GameBoard> {
                   _horizontalAccumulator += details.delta.dx;
                   _verticalAccumulator += details.delta.dy;
 
-                  final now = DateTime.now();
-                  final timeSinceLastMove = now.difference(_lastHorizontalMoveTime).inMilliseconds;
-
-                  // NOTCHED MOVEMENT: Checks distance AND adds a tiny time delay
-                  // This creates the "gear-like" feel where each step is distinct
-                  if (_horizontalAccumulator.abs() >= _moveThreshold && timeSinceLastMove > _horizontalMoveDelay) {
-                    setState(() { // FORCE INSTANT REDRAW
+                  // DISTANCE-BASED MOVEMENT: Moves block exactly when threshold is crossed
+                  // This removes the "floaty" feel and makes it stop exactly with your finger
+                  if (_horizontalAccumulator.abs() >= _moveThreshold) {
+                    setState(() {
                       if (_horizontalAccumulator > 0) {
                         moveRight();
+                        _horizontalAccumulator -= _moveThreshold;
                       } else {
                         moveLeft();
+                        _horizontalAccumulator += _moveThreshold;
                       }
                     });
                     
                     // Add Haptic Feedback for tactile "snap" feel
                     HapticFeedback.selectionClick();
-
-                    // Reset to 0 and record the time to create the "notch"
-                    _horizontalAccumulator = 0;
-                    _lastHorizontalMoveTime = now;
                   }
 
                   // Process vertical movement (Soft Drop)
