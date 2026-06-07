@@ -62,7 +62,7 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 1.0; // MAXIMUM SENSITIVITY - lowered from 3.0
+  final double _moveThreshold = 0.9; // MAXIMUM SENSITIVITY - lowered from 3.0
 
   @override
   void initState() {
