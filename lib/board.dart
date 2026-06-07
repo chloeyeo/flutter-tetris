@@ -62,7 +62,7 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 0.9; // MAXIMUM SENSITIVITY - lowered from 3.0
+  final double _moveThreshold = 3.0; // OPTIMAL SENSITIVITY for one-block-at-a-time feel
 
   @override
   void initState() {
@@ -597,28 +597,28 @@ class _GameBoardState extends State<GameBoard> {
                   _horizontalAccumulator += details.delta.dx;
                   _verticalAccumulator += details.delta.dy;
 
-                  // ULTRA SENSITIVE: Process all accumulated movement in a single frame
-                  // This allows for "multi-step" jumps if moving quickly
-                  while (_horizontalAccumulator.abs() >= _moveThreshold) {
+                  // SEQUENTIAL MOVEMENT: Only move one block at a time per event
+                  // This ensures you can see each block move step-by-step
+                  if (_horizontalAccumulator.abs() >= _moveThreshold) {
                     setState(() { // FORCE INSTANT REDRAW
                       if (_horizontalAccumulator > 0) {
                         moveRight();
-                        _horizontalAccumulator -= _moveThreshold;
                       } else {
                         moveLeft();
-                        _horizontalAccumulator += _moveThreshold;
                       }
                     });
+                    // Reset to 0 to wait for the next deliberate movement
+                    _horizontalAccumulator = 0;
                   }
 
                   // Process vertical movement (Soft Drop)
-                  while (_verticalAccumulator >= _moveThreshold) {
+                  if (_verticalAccumulator >= _moveThreshold) {
                     if (!checkCollision(Direction.down)) {
                       setState(() {
                         currentPiece.movePiece(Direction.down);
                       });
                     }
-                    _verticalAccumulator -= _moveThreshold;
+                    _verticalAccumulator = 0;
                   }
                 },
                     onVerticalDragEnd: (details) {
