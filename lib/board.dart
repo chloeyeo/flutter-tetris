@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tetris/piece.dart';
 import 'package:tetris/pixel.dart';
 import 'package:tetris/values.dart';
@@ -64,7 +65,7 @@ class _GameBoardState extends State<GameBoard> {
   double _verticalAccumulator = 0;
   final double _moveThreshold = 3.0; // SENSITIVITY for initial movement
   DateTime _lastHorizontalMoveTime = DateTime.now();
-  final int _horizontalMoveDelay = 60; // 60ms delay between block steps (the "snap" feel)
+  final int _horizontalMoveDelay = 120; // 120ms delay (Increased from 60ms for precision)
 
   @override
   void initState() {
@@ -612,6 +613,10 @@ class _GameBoardState extends State<GameBoard> {
                         moveLeft();
                       }
                     });
+                    
+                    // Add Haptic Feedback for tactile "snap" feel
+                    HapticFeedback.selectionClick();
+
                     // Reset to 0 and record the time to create the "notch"
                     _horizontalAccumulator = 0;
                     _lastHorizontalMoveTime = now;
