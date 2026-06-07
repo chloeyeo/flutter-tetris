@@ -68,7 +68,15 @@ class _GameBoardState extends State<GameBoard> {
   void initState() {
     super.initState();
     _loadSettings();
-    // _initAds(); // Temporarily disabled to verify startup speed
+    
+    // Lazy Load Ads: Wait 5 seconds before starting the ad handshake
+    // This gives the game board priority during startup
+    Future.delayed(const Duration(seconds: 5), () {
+      if (mounted) {
+        _initAds();
+      }
+    });
+    
     startGame();
   }
 
@@ -166,7 +174,7 @@ class _GameBoardState extends State<GameBoard> {
   void startGame() {
     currentPiece.initializePiece();
     generateNextPiece();
-    Duration frameRate = const Duration(milliseconds: 600); // SLOWER SPEED
+    Duration frameRate = const Duration(milliseconds: 400); // FASTER START
     
     // Start the game loop immediately
     if (mounted) {
@@ -588,11 +596,13 @@ class _GameBoardState extends State<GameBoard> {
 
                   // Check if we've moved enough horizontally
                   if (_horizontalAccumulator.abs() >= _moveThreshold) {
-                    if (_horizontalAccumulator > 0) {
-                      moveRight();
-                    } else {
-                      moveLeft();
-                    }
+                    setState(() { // FORCE INSTANT REDRAW
+                      if (_horizontalAccumulator > 0) {
+                        moveRight();
+                      } else {
+                        moveLeft();
+                      }
+                    });
                     // Reset horizontal but keep the "leftover" movement for smoothness
                     _horizontalAccumulator = 0;
                   }
