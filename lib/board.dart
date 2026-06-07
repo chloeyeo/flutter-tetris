@@ -66,7 +66,7 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 30.0; // Distance in pixels to move 1 block
+  final double _moveThreshold = 1.5; // Distance in pixels to move 1 block
   DateTime _lastHorizontalMoveTime = DateTime.now();
   int _horizontalMoveDelay = 140; // Starts slow (140ms) for precision
   int _consecutiveHorizontalMoves = 0; // Track consecutive moves for DAS
@@ -596,11 +596,6 @@ class _GameBoardState extends State<GameBoard> {
                     behavior: HitTestBehavior.opaque, // Ensure even empty space catches touch
                     dragStartBehavior: DragStartBehavior.down, // [NEW] Removes initial "waiting" period for touch
                     onTap: rotatePiece,
-                onPanStart: (details) {
-                  // Reset accumulators when a new touch starts
-                  _horizontalAccumulator = 0;
-                  _verticalAccumulator = 0;
-                },
                 onPanStart: (details) {
                   // Reset accumulators and DAS state when a new touch starts
                   _horizontalAccumulator = 0;
