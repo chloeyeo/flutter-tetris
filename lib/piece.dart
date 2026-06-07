@@ -15,25 +15,25 @@ class Piece {
   void initializePiece() {
     switch (type) {
       case Tetromino.L:
-        position = [-26, -16, -6, -5];
+        position = [4, 14, 24, 25]; // Shifted from negative to visible range
         break;
       case Tetromino.J:
-        position = [-25, -15, -5, -6];
+        position = [5, 15, 25, 24];
         break;
       case Tetromino.I:
-        position = [-6, -5, -4, -3];
+        position = [4, 14, 24, 34];
         break;
       case Tetromino.O:
-        position = [-26, -25, -16, -15];
+        position = [4, 5, 14, 15];
         break;
       case Tetromino.S:
-        position = [-15, -14, -6, -5];
+        position = [15, 16, 24, 25];
         break;
       case Tetromino.Z:
-        position = [-16, -17, -6, -5];
+        position = [14, 15, 25, 26];
         break;
       case Tetromino.T:
-        position = [-26, -16, -15, -6];
+        position = [4, 14, 15, 24];
         break;
     }
   }
