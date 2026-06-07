@@ -6,6 +6,7 @@ enum SkinType {
   y2k,
   sparkle,
   candy,
+  chalkboard,
 }
 
 class TetrisSkin {
@@ -16,7 +17,9 @@ class TetrisSkin {
   final Color backgroundColor;
   final Color gridLineColor;
   final Color emptyColor;
-  final Color textColor; // [NEW] Added for dynamic contrast
+  final Color textColor;
+  final String? landSound; // [NEW] Asset path for landing sound
+  final String? clearSound; // [NEW] Asset path for line clear sound
 
   TetrisSkin({
     required this.type,
@@ -27,6 +30,8 @@ class TetrisSkin {
     required this.gridLineColor,
     required this.emptyColor,
     required this.textColor,
+    this.landSound,
+    this.clearSound,
   });
 
   static TetrisSkin classic = TetrisSkin(
@@ -102,6 +107,26 @@ class TetrisSkin {
     textColor: const Color(0xFF5D4037), // Dark Chocolate Brown for contrast
   );
 
+  static TetrisSkin chalkboard = TetrisSkin(
+    type: SkinType.chalkboard,
+    name: "Scholastic Chalk",
+    colors: {
+      Tetromino.I: const Color(0xFFE0F7FA), // Chalk Blue
+      Tetromino.L: const Color(0xFFFFF9C4), // Chalk Yellow
+      Tetromino.J: const Color(0xFFE1BEE7), // Chalk Purple
+      Tetromino.O: const Color(0xFFFFFFFF), // Chalk White
+      Tetromino.S: const Color(0xFFC8E6C9), // Chalk Green
+      Tetromino.Z: const Color(0xFFFFCCBC), // Chalk Red
+      Tetromino.T: const Color(0xFFFCE4EC), // Chalk Pink
+    },
+    backgroundColor: const Color(0xFF004D40), // Deep Chalkboard Green
+    gridLineColor: Colors.white.withAlpha(20),
+    emptyColor: const Color(0xFF003D33),
+    textColor: Colors.white.withAlpha(200),
+    landSound: "sounds/chalk_land.mp3",
+    clearSound: "sounds/eraser_swipe.mp3",
+  );
+
   static TetrisSkin getSkin(SkinType type) {
     switch (type) {
       case SkinType.y2k:
@@ -110,6 +135,8 @@ class TetrisSkin {
         return sparkle;
       case SkinType.candy:
         return candy;
+      case SkinType.chalkboard:
+        return chalkboard;
       case SkinType.classic:
         return classic;
     }
