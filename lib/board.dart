@@ -78,9 +78,10 @@ class _GameBoardState extends State<GameBoard> {
     });
   }
 
-  void _initAds() async {
-    await _adService.init();
-    _loadBannerAd();
+  void _initAds() {
+    _adService.init().then((_) {
+      _loadBannerAd();
+    });
   }
 
   void _loadBannerAd() {
@@ -162,7 +163,14 @@ class _GameBoardState extends State<GameBoard> {
     currentPiece.initializePiece();
     generateNextPiece();
     Duration frameRate = const Duration(milliseconds: 600); // SLOWER SPEED
-    gameLoop(frameRate);
+    
+    // Use a small delay to ensure the UI is rendered before the loop starts
+    // This helps with initial touch responsiveness
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) {
+        gameLoop(frameRate);
+      }
+    });
   }
 
   void gameLoop(Duration frameRate) {
