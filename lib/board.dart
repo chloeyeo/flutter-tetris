@@ -59,6 +59,11 @@ class _GameBoardState extends State<GameBoard> {
   // piece bag for 7-bag system
   List<Tetromino> pieceBag = [];
 
+  // Touch Accumulators for smooth movement
+  double _horizontalAccumulator = 0;
+  double _verticalAccumulator = 0;
+  final double _moveThreshold = 15.0; // Total pixels moved to trigger 1 block shift
+
   @override
   void initState() {
     super.initState();
@@ -571,24 +576,38 @@ class _GameBoardState extends State<GameBoard> {
                 Expanded(
                   child: GestureDetector(
                     onTap: rotatePiece,
-                    onPanUpdate: (details) {
-                      // Sensitivity threshold - ULTRA HIGH SENSITIVITY
-                      // A tiny 2-pixel movement will now trigger a block move
-                      if (details.delta.dx > 2) {
-                        moveRight();
-                      } else if (details.delta.dx < -2) {
-                        moveLeft();
-                      }
-                      
-                      if (details.delta.dy > 3) {
-                        // move down faster
-                        if (!checkCollision(Direction.down)) {
-                          setState(() {
-                            currentPiece.movePiece(Direction.down);
-                          });
-                        }
-                      }
-                    },
+                onPanStart: (details) {
+                  // Reset accumulators when a new touch starts
+                  _horizontalAccumulator = 0;
+                  _verticalAccumulator = 0;
+                },
+                onPanUpdate: (details) {
+                  // Add the change in position to our accumulators
+                  _horizontalAccumulator += details.delta.dx;
+                  _verticalAccumulator += details.delta.dy;
+
+                  // Check if we've moved enough horizontally
+                  if (_horizontalAccumulator.abs() >= _moveThreshold) {
+                    if (_horizontalAccumulator > 0) {
+                      moveRight();
+                    } else {
+                      moveLeft();
+                    }
+                    // Reset horizontal but keep the "leftover" movement for smoothness
+                    _horizontalAccumulator = 0;
+                  }
+
+                  // Check if we've moved enough vertically (Soft Drop)
+                  if (_verticalAccumulator >= _moveThreshold) {
+                    if (!checkCollision(Direction.down)) {
+                      setState(() {
+                        currentPiece.movePiece(Direction.down);
+                      });
+                    }
+                    // Reset vertical
+                    _verticalAccumulator = 0;
+                  }
+                },
                     onVerticalDragEnd: (details) {
                       // detect sharp downward flick for hard drop
                       if (details.primaryVelocity != null && details.primaryVelocity! > 500) {
