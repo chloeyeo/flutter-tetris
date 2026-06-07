@@ -63,7 +63,7 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 1.0; // Distance in pixels to move 1 block
+  final double _moveThreshold = 30; // Distance in pixels to move 1 block
 
   @override
   void initState() {
@@ -612,15 +612,17 @@ class _GameBoardState extends State<GameBoard> {
                     setState(() {
                       if (_horizontalAccumulator > 0) {
                         moveRight();
-                        _horizontalAccumulator -= _moveThreshold;
                       } else {
                         moveLeft();
-                        _horizontalAccumulator += _moveThreshold;
                       }
                     });
                     
                     // Add Haptic Feedback for tactile "snap" feel
                     HapticFeedback.selectionClick();
+
+                    // [BRAKE LOGIC] Reset to 0 after movement to prevent "gliding"
+                    // This forces the user to move another 30px for the next block
+                    _horizontalAccumulator = 0;
                   }
 
                   // Process vertical movement (Soft Drop) with a higher threshold to prevent accidents
