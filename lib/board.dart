@@ -13,6 +13,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tetris/skin_gallery.dart';
 import 'package:tetris/piece_preview.dart';
+import 'package:tetris/sound_service.dart';
 
 /*
 Game board is a 2x2 grid with null representing an empty space.
@@ -54,6 +55,7 @@ class _GameBoardState extends State<GameBoard> {
   BannerAd? _bannerAd;
   bool _isBannerLoaded = false;
   final AdService _adService = AdService();
+  final SoundService _soundService = SoundService();
 
   // random generator
   final Random rand = Random();
@@ -324,6 +326,9 @@ class _GameBoardState extends State<GameBoard> {
       // reset hold capability for next piece
       canHold = true;
 
+      // play landing sound
+      _soundService.playSound(currentSkin.landSound);
+
       // create the next piece
       createNewPiece();
     }
@@ -468,6 +473,9 @@ class _GameBoardState extends State<GameBoard> {
 
         // set the top row to empty
         gameBoard[0] = List.generate(rowLength, (index) => null);
+
+        // play line clear sound
+        _soundService.playSound(currentSkin.clearSound);
 
         // increase score
         currentScore++;
