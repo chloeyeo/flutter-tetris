@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
-
+import 'package:tetris/ad_service.dart';
 import 'board.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Ads BEFORE the app starts
+  // This ensures the "busy period" happens during the splash screen
+  // instead of during the first few seconds of gameplay.
+  await AdService().init();
+
   runApp(const MyApp());
 }
 

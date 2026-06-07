@@ -62,7 +62,7 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 6.0; // ULTRA SENSITIVE - lowered from 15.0
+  final double _moveThreshold = 3.0; // ULTRA SENSITIVE - lowered from 15.0
 
   @override
   void initState() {
@@ -85,10 +85,7 @@ class _GameBoardState extends State<GameBoard> {
   }
 
   void _initAds() {
-    _adService.init().then((_) {
-      if (!mounted) return;
-      _loadBannerAd();
-    });
+    _loadBannerAd();
   }
 
   void _loadBannerAd() {
