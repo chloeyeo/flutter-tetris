@@ -66,9 +66,10 @@ class _GameBoardState extends State<GameBoard> {
   // Touch Accumulators for smooth movement
   double _horizontalAccumulator = 0;
   double _verticalAccumulator = 0;
-  final double _moveThreshold = 0.1; // Distance in pixels to move 1 block
+  final double _moveThreshold = 30.0; // Distance in pixels to move 1 block
   DateTime _lastHorizontalMoveTime = DateTime.now();
-  final int _horizontalMoveDelay = 200; // delay (the "notch" feel)
+  int _horizontalMoveDelay = 140; // Starts slow (140ms) for precision
+  int _consecutiveHorizontalMoves = 0; // Track consecutive moves for DAS
 
   @override
   void initState() {
@@ -600,6 +601,13 @@ class _GameBoardState extends State<GameBoard> {
                   _horizontalAccumulator = 0;
                   _verticalAccumulator = 0;
                 },
+                onPanStart: (details) {
+                  // Reset accumulators and DAS state when a new touch starts
+                  _horizontalAccumulator = 0;
+                  _verticalAccumulator = 0;
+                  _consecutiveHorizontalMoves = 0;
+                  _horizontalMoveDelay = 140; // Reset to slow speed
+                },
                 onPanUpdate: (details) {
                   // Add the change in position to our accumulators
                   double dx = details.delta.dx;
@@ -616,8 +624,7 @@ class _GameBoardState extends State<GameBoard> {
                   final now = DateTime.now();
                   final timeSinceLastMove = now.difference(_lastHorizontalMoveTime).inMilliseconds;
 
-                  // NOTCHED MOVEMENT: Checks distance AND adds a tiny time delay
-                  // This creates the "gear-like" feel where each step is distinct
+                  // ADAPTIVE DAS MOVEMENT: Starts notched, then accelerates
                   if (_horizontalAccumulator.abs() >= _moveThreshold && timeSinceLastMove > _horizontalMoveDelay) {
                     setState(() {
                       if (_horizontalAccumulator > 0) {
@@ -629,6 +636,14 @@ class _GameBoardState extends State<GameBoard> {
                     
                     // Add Haptic Feedback for tactile "snap" feel
                     HapticFeedback.selectionClick();
+
+                    // Record the move and accelerate (DAS Logic)
+                    _consecutiveHorizontalMoves++;
+                    if (_consecutiveHorizontalMoves > 1) {
+                      // After the first move, start decreasing delay (accelerating)
+                      // Min delay of 45ms for super fast shifting
+                      _horizontalMoveDelay = max(45, 140 - (_consecutiveHorizontalMoves * 15));
+                    }
 
                     // [BRAKE LOGIC] Reset to 0 after movement to prevent "gliding"
                     _horizontalAccumulator = 0;
